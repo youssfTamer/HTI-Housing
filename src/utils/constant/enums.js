@@ -64,3 +64,9 @@ export const Days = {
     SATURDAY: 'saturday'
 }
 Object.freeze(Days)
+
+export const roomStatus = {
+    BOOKED:"booked",
+    EMPTY:"empty",
+    PENDING:"pending",
+}

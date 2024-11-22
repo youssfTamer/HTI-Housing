@@ -8,21 +8,9 @@ const buildingSchema = new Schema({
         trim: true
     },
     address: {
-        street: {
             type: String,
             required: true,
             trim: true
-        },
-        city: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        state: {
-            type: String,
-            required: true,
-            trim: true
-        },
     },
     floors: {
         type: Number,
@@ -48,7 +36,7 @@ const buildingSchema = new Schema({
         type: String,
         enum: Object.values(amenities),
     }],
-    genderRestriction: {
+    genderType: {
         type: String,
         enum: Object.values(gender),
         required: true
@@ -67,10 +55,14 @@ const buildingSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    maintenanceContact: {
-        name: String,
-        phone: String,
-    }
+      createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
 }, { timestamps: true })
 
 //model
