@@ -8,7 +8,7 @@ const buildingRouter = Router()
 
 buildingRouter.post('/',
     isAuthenticated(),
-    isAuthorized(roles.MANAGER, roles.STAFF,roles.STUDENT),
+    isAuthorized(roles.MANAGER, roles.STAFF),
     isValid()
 )
 
