@@ -17,5 +17,8 @@ export const messages = {
     maintenance:generateMessage('maintenance'),
     delay: generateMessage('delay'),
     housing: generateMessage('housing'),
+    building: generateMessage('building'),
+    room: generateMessage('room'),
+    apartment: generateMessage('apartment'),
     sendEmail: { ...generateMessage('EmailService'), failtoOTP: 'fail To Send OTP Email',sendSuccessfully: 'OTP send Successfully' }
 }

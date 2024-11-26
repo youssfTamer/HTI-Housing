@@ -28,7 +28,7 @@ export const signupForStudent = async (req, res, next) => {
     })
 
     //save to db
-    const createdStudent = await User.save()
+    const createdStudent = await user.save()
     if (!createdStudent) {
         req.failAuth = ID
         return next(new AppError(messages.student.failToCreate, 500))
