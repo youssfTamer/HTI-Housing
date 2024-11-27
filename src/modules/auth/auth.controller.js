@@ -33,12 +33,13 @@ export const signupForStudent = async (req, res, next) => {
         req.failAuth = ID
         return next(new AppError(messages.student.failToCreate, 500))
     }
-
     //generate token
     const token = generateToken({ payload: { email, _id: createdStudent._id } });
     //send email
-    await sendEmail({ to: email, subject: 'verify your account', html: `<p>click on link to verify yout account <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}">link</a> </p>` })
-
+    const isEmailAccepted = await sendEmail({ to: email, subject: 'verify your account', html: `<p>click on link to verify yout account <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}">link</a> </p>` })
+    if (!isEmailAccepted) {
+        return next(new AppError(messages.sendEmail.failToCreate, 500))
+    }
     //send response
     return res.status(201).json({
         message: messages.student.createdSuccessfully,
@@ -110,8 +111,19 @@ export const forgetPassword = async (req, res, next) => {
     })
 }
 
-export const verifyOTP = async (req, res, next) => {
-    const { otp } = req.body
-    const student = new User({})
-
+export let resetPassword = async (req, res, next) => {
+    let { OTP, expiresIn, newPassword } = req.body
+    if (OTP && expiresIn >= Date.now()) {
+        let OTPCheck = await User.findOne({ OTP, expiresIn });
+        console.log(OTPCheck);
+        if (!OTPCheck) {
+            return next(new AppError(messages.OTP.ReuseOTP, 404));
+        }
+        OTPCheck.password = bcrypt.hashSync(newPassword, 5)
+        OTPCheck.OTP = ""
+        OTPCheck.expiresIn = 0
+        OTPCheck.save()
+        return res.status(201).json({ message: 'Password has been rested successfully' });
+    }
+    return next(new AppError("Invailed Or Expired OTP", 401 ));
 }

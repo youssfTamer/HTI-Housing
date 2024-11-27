@@ -17,7 +17,7 @@ export const forgetPasswordVal = joi.object({
     email:generalFields.email.required()
 })
 
-export const resetPassword = joi.object({
+export const resetPasswordVal = joi.object({
     email:generalFields.email.required(),
     password:generalFields.password.required()
 })

@@ -13,12 +13,12 @@ const generateMessage = (entity) => ({
 
 export const messages = {
     student: { ...generateMessage('student'), verified: 'student verified Successfully', invalidCredentails: 'invalid credentails', LoginSuccessfully: 'login successfully', notAuthorized: 'not authorized to access this api' },
-    review: generateMessage('review'),
+    sendEmail: { ...generateMessage('EmailService'), failtoOTP: 'fail To Send OTP Email',sendSuccessfully: 'OTP send Successfully' },
+    OTP: {...generateMessage('OTP'),ReuseOTP: 'OTP Has been Already Used',},
     maintenance:generateMessage('maintenance'),
     delay: generateMessage('delay'),
     housing: generateMessage('housing'),
     building: generateMessage('building'),
     room: generateMessage('room'),
     apartment: generateMessage('apartment'),
-    sendEmail: { ...generateMessage('EmailService'), failtoOTP: 'fail To Send OTP Email',sendSuccessfully: 'OTP send Successfully' }
 }
