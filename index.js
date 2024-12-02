@@ -6,7 +6,7 @@ import { connectDB } from './db/connection.js'
 import { initApp } from './src/initApp.js'
 dotenv.config({ path: path.resolve('./config/.env') })
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 connectDB()
 
 initApp(app, express)
