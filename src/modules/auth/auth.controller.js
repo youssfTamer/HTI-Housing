@@ -24,7 +24,8 @@ export const signupForStudent = async (req, res, next) => {
         name,
         email,
         password,
-        ID
+        ID,
+        status: status.WAITING_ADMIN_APPROVAL
     })
 
     //save to db
@@ -126,4 +127,40 @@ export let resetPassword = async (req, res, next) => {
         return res.status(201).json({ message: 'Password has been rested successfully' });
     }
     return next(new AppError("Invailed Or Expired OTP", 401 ));
+}
+
+export const handleStudentApproval = async (req, res, next) => {
+    const { studentId } = req.params;
+    const { action } = req.body; // 'approve' or 'reject'
+    
+    const student = await User.findOne({ _id: studentId, status: status.WAITING_ADMIN_APPROVAL });
+    
+    if (!student) {
+        return next(new AppError('Student not found or already processed', 404));
+    }
+
+    if (action === 'approve') {
+        student.status = status.PENDING;
+        // Generate verification token and send email
+        const token = generateToken({ payload: { email: student.email, _id: student._id } });
+        await sendEmail({ 
+            to: student.email, 
+            subject: 'Account Approved - Verify your account', 
+            html: `<p>Your account has been approved! Click on link to verify your account <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}">link</a></p>` 
+        });
+    } else if (action === 'reject') {
+        student.status = status.REJECTED;
+        await sendEmail({ 
+            to: student.email, 
+            subject: 'Account Registration Update', 
+            html: `<p>We regret to inform you that your account registration has been rejected.</p>` 
+        });
+    }
+
+    await student.save();
+    
+    return res.status(200).json({
+        message: `Student ${action}ed successfully`,
+        success: true
+    });
 }

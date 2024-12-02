@@ -1,7 +1,8 @@
 export const status = {
-    PENDING: 'pending to verify',
+    PENDING: 'pending',
     VERIFIED: 'verified',
-    BLOCKING: 'blocked'
+    REJECTED: 'rejected',
+    WAITING_ADMIN_APPROVAL: 'waiting_admin_approval'
 }
 Object.freeze(status)
 
