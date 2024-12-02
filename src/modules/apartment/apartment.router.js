@@ -5,6 +5,7 @@ import { roles } from "../../utils/constant/enums.js";
 import { isValid } from "../../middleware/validation.js";
 import { addApartmentVal } from "./apartment.validation.js";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
+import { getApartment } from "./apartment.controller.js";
 
 const apartmentRouter = Router()
 //todo
@@ -17,5 +18,8 @@ apartmentRouter.post('/',
 )
 
 //get apartment
+apartmentRouter.get('/',
+    asyncHandler(getApartment)
+)
 
 export default apartmentRouter

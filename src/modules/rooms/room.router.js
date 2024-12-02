@@ -11,8 +11,8 @@ const roomRouter = Router()
 //add room todo auth authoriz
 
 roomRouter.post('/',
-    isAuthenticated(),
-    cloudUploads().fields([{ name: 'mainImage', maxCount: 1 }, { name: 'subImages', maxCount: 5 }]),
+    //isAuthenticated(),
+    //cloudUploads().fields([{ name: 'mainImage', maxCount: 1 }, { name: 'subImages', maxCount: 5 }]),
     isValid(addRoomVal),
     asyncHandler(createRoom)
 )
