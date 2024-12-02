@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { gender, roomStatus } from '../../src/utils/constant/enums.js';
+import { gender, roomStatus, roomType } from '../../src/utils/constant/enums.js';
 
 const apartmentSchema = new Schema({
     apartmentNumber: {
