@@ -1,4 +1,4 @@
-import { Apartment } from "../../../db/models/apartment.model.js"
+import { Apartment } from "../../../db/index.js"
 import { AppError } from "../../utils/appError.js"
 import { messages } from "../../utils/constant/messages.js"
 

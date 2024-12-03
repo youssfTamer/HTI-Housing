@@ -12,10 +12,10 @@ const apartmentSchema = new Schema({
         required: true,
         min: 1
     },
-    floorNumber: {
-        type: Number,
-        required: true,
-        min: 0
+    floor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Floor',
+        required: true
     },
     building: {
         type: Schema.Types.ObjectId,

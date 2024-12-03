@@ -71,3 +71,16 @@ export const roomStatus = {
     EMPTY:"empty",
     PENDING:"pending",
 }
+Object.freeze(roomStatus)
+
+export const bookingStatus = {
+    PENDING: 'pending',          // Initial state when booking is created
+    PAYMENT_PENDING: 'payment_pending', // Waiting for payment
+    CONFIRMED: 'confirmed',      // Booking has been approved/confirmed
+    IN_PROGRESS: 'in_progress',  // Booking is currently active
+    CANCELLED: 'cancelled',      // Booking has been cancelled
+    COMPLETED: 'completed',      // Booking period has ended successfully
+    REJECTED: 'rejected',        // Booking was rejected by admin/system
+    EXPIRED: 'expired'           // Booking expired without confirmation
+}
+Object.freeze(bookingStatus)

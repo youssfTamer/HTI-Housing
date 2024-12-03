@@ -5,7 +5,7 @@ import { roles } from "../../utils/constant/enums.js";
 import { isValid } from "../../middleware/validation.js";
 import { addApartmentVal } from "./apartment.validation.js";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
-import { getApartment } from "./apartment.controller.js";
+import { addApartment, getApartment } from "./apartment.controller.js";
 
 const apartmentRouter = Router()
 //todo
@@ -14,7 +14,7 @@ apartmentRouter.post('/',
     //isAuthenticated(),
     //isAuthorized(roles.MANAGER, roles.STAFF,roles.STUDENT),
     isValid(addApartmentVal),
-    asyncHandler()
+    asyncHandler(addApartment)
 )
 
 //get apartment
