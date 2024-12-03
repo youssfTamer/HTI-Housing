@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { gender, roomStatus, roomType } from '../../src/utils/constant/enums.js';
+import { roomStatus, roomType } from '../../src/utils/constant/enums.js';
 
 const roomSchema = new Schema({
     roomNumber: {
@@ -7,13 +7,13 @@ const roomSchema = new Schema({
         required: true,
         trim: true
     },
-    apartmentNumber: {
-        type: String,
-        required: true,
-        trim: true
+    apartment: {
+        type: Schema.Types.ObjectId,
+        ref: 'Apartment',
     },
-    floorNumber: {
-        type: Number,
+    floor: {
+        type: Schema.Types.ObjectId,
+        ref: 'Floor',
         required: true,
         min: 0
     },
