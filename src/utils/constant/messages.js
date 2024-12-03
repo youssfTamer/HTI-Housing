@@ -21,4 +21,5 @@ export const messages = {
     building: generateMessage('building'),
     room: generateMessage('room'),
     apartment: generateMessage('apartment'),
+    floor: generateMessage('floor'),
 }
