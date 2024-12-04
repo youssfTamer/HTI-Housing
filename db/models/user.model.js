@@ -52,7 +52,6 @@ const userSchema = new Schema({
         secure_url: { type: String, required: false },
         public_id: { type: String, required: false }
     },
-    DOB: { type: String, default: Date.now() }
 }, { timestamps: true })
 
 //model

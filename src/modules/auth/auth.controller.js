@@ -2,85 +2,184 @@ import bcrypt from 'bcrypt'
 import { User } from "../../../db/index.js"
 import { AppError } from "../../utils/appError.js"
 import { messages } from "../../utils/constant/messages.js"
-import { status } from '../../utils/constant/enums.js'
+import { roles, status } from '../../utils/constant/enums.js'
 import { sendEmail } from '../../utils/email.js'
 import { generateToken, verifyToken } from "../../utils/token.js"
 
-export const signupForStudent = async (req, res, next) => {
+export const signup = async (req, res, next) => {
+    // get data from req 
+    let { ID, name, email, password, role, department, gender, phone } = req.body
 
-    //get data from req 
-    let { ID, name, email, password } = req.body
-
-    //check existenc
-    const studentExist = await User.findOne({ ID });
-    if (studentExist) {
-        return next(new AppError(messages.student.alreadyExist, 409))
+    // check existence
+    const userExist = await User.findOne({ 
+        $or: [{ ID }, { email }, { phone }]
+    });
+    if (userExist) {
+        return next(new AppError(messages.user.alreadyExist, 409))
     }
 
-    //prepare data
-    //hash password
+    // Set initial status based on role
+    let initialStatus;
+    switch (role) {
+        case roles.STUDENT:
+            initialStatus = status.WAITING_ADMIN_APPROVAL;
+            break;
+        case roles.STAFF:
+        case roles.MANAGER:
+            initialStatus = status.PENDING; // Direct verification for staff/manager
+            break;
+        default:
+            return next(new AppError(messages.user.invalidRole, 400));
+    }
+
+    // prepare data
     password = bcrypt.hashSync(password, 5)
     const user = new User({
         name,
         email,
         password,
         ID,
-        status: status.WAITING_ADMIN_APPROVAL
+        role,
+        department,
+        gender,
+        phone,
+        status: initialStatus
     })
 
-    //save to db
-    const createdStudent = await user.save()
-    if (!createdStudent) {
-        req.failAuth = ID
-        return next(new AppError(messages.student.failToCreate, 500))
+    // save to db
+    const createdUser = await user.save()
+    if (!createdUser) {
+        return next(new AppError(messages.user.failToCreate, 500))
     }
-    //generate token
-    const token = generateToken({ payload: { email, _id: createdStudent._id } });
-    //send email
-    const isEmailAccepted = await sendEmail({ to: email, subject: 'verify your account', html: `<p>click on link to verify yout account <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}">link</a> </p>` })
-    if (!isEmailAccepted) {
-        return next(new AppError(messages.sendEmail.failToCreate, 500))
+
+    // Only send verification email for STAFF and MANAGER
+    if (role !== roles.STUDENT) {
+        // generate token
+        const token = generateToken({ payload: { email, _id: createdUser._id } });
+
+        // Send verification email
+        const emailSubject = 'Complete Your Account Verification';
+        const emailHTML = `
+            <h2>Welcome!</h2>
+            <p>Thank you for registering. To complete your account setup, please verify your email address.</p>
+            <p>Click the button below to verify your account:</p>
+            <div style="margin: 20px 0;">
+                <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}" 
+                   style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px;">
+                    Verify Account
+                </a>
+            </div>
+            <p><small>If the button doesn't work, you can copy and paste this link into your browser:</small><br>
+            ${req.protocol}://${req.headers.host}/auth/verify/${token}</p>
+            <br>
+            <p>Best regards,<br>The System Team</p>
+        `;
+
+        const isEmailAccepted = await sendEmail({ 
+            to: email, 
+            subject: emailSubject, 
+            html: emailHTML 
+        });
+
+        if (!isEmailAccepted) {
+            return next(new AppError(messages.sendEmail.failToSend, 500));
+        }
     }
-    //send response
+
+    // send response
     return res.status(201).json({
-        message: messages.student.createdSuccessfully,
+        message: messages.user.createdSuccessfully,
         success: true,
-        data: createdStudent
+        data: createdUser
     })
 }
 
 
 export const verifyAccount = async (req, res, next) => {
-    //get data from req
+    // get data from req
     const { token } = req.params
     const payload = verifyToken({ token })
-    await User.findOneAndUpdate({ email: payload.email, status: status.PENDING }, { status: status.VERIFIED })
-    return res.status(200).json({ message: messages.student.verified, success: true })
+    
+    if (payload.message) {
+        return next(new AppError(messages.user.invalidToken, 401))
+    }
+
+    const user = await User.findOne({ email: payload.email })
+    if (!user) {
+        return next(new AppError(messages.user.notFound, 404))
+    }
+
+    // Handle verification based on role
+    if (user.role === roles.STUDENT) {
+        if (user.status !== status.PENDING) {
+            return next(new AppError(messages.user.invalidVerification, 400))
+        }
+    } else {
+        // For STAFF and MANAGER
+        if (user.status !== status.PENDING) {
+            return next(new AppError(messages.user.invalidVerification, 400))
+        }
+    }
+
+    // Update status to verified
+    user.status = status.VERIFIED
+    await user.save()
+
+    return res.status(200).json({ 
+        message: messages.user.verified, 
+        success: true 
+    })
 }
 
 
 export const login = async (req, res, next) => {
-
-    //get data from req
+    // get data from req
     const { email, password } = req.body
-    const studentExist = await User.findOne({ email, status: status.VERIFIED })
-    if (!studentExist) {
-        return next(new AppError(messages.student.invalidCredentails, 400))
+    
+    // Find user regardless of role, but must be verified
+    const user = await User.findOne({ email })
+    if (!user) {
+        return next(new AppError(messages.user.invalidCredentails, 400))
     }
 
-    //check password
-    const match = bcrypt.compareSync(password, studentExist.password)
+    // Check user status based on role
+    if (user.role === roles.STUDENT) {
+        if (user.status === status.WAITING_ADMIN_APPROVAL) {
+            return next(new AppError(messages.user.adminApproval, 403))
+        }
+        if (user.status !== status.VERIFIED) {
+            return next(new AppError(messages.user.pleaseVerify, 403))
+        }
+    } else {
+        // For STAFF and MANAGER
+        if (user.status !== status.VERIFIED) {
+            return next(new AppError(messages.user.pleaseVerify, 403))
+        }
+    }
+
+    // check password
+    const match = bcrypt.compareSync(password, user.password)
     if (!match) {
-        return next(new AppError(messages.student.invalidCredentails, 400))
+        return next(new AppError(messages.user.invalidCredentails, 400))
     }
-    //generate Token
-    const token = generateToken({ payload: { _id: studentExist._id, email } })
 
-    //send response
+    // generate Token with role included
+    const token = generateToken({ 
+        payload: { 
+            _id: user._id, 
+            email,
+            role: user.role 
+        }
+    })
+
+    // send response
     return res.status(200).json({
-        message: messages.student.LoginSuccessfully,
+        message: messages.user.LoginSuccessfully,
         success: true,
-        token
+        data: {
+            token,
+            role: user.role
+        }
     })
 }
 
@@ -129,9 +228,8 @@ export let resetPassword = async (req, res, next) => {
     return next(new AppError("Invailed Or Expired OTP", 401 ));
 }
 
-export const handleStudentApproval = async (req, res, next) => {
+export const approveStudent = async (req, res, next) => {
     const { studentId } = req.params;
-    const { action } = req.body; // 'approve' or 'reject'
     
     const student = await User.findOne({ _id: studentId, status: status.WAITING_ADMIN_APPROVAL });
     
@@ -139,28 +237,89 @@ export const handleStudentApproval = async (req, res, next) => {
         return next(new AppError('Student not found or already processed', 404));
     }
 
-    if (action === 'approve') {
-        student.status = status.PENDING;
-        // Generate verification token and send email
-        const token = generateToken({ payload: { email: student.email, _id: student._id } });
-        await sendEmail({ 
-            to: student.email, 
-            subject: 'Account Approved - Verify your account', 
-            html: `<p>Your account has been approved! Click on link to verify your account <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}">link</a></p>` 
-        });
-    } else if (action === 'reject') {
-        student.status = status.REJECTED;
-        await sendEmail({ 
-            to: student.email, 
-            subject: 'Account Registration Update', 
-            html: `<p>We regret to inform you that your account registration has been rejected.</p>` 
-        });
+    student.status = status.PENDING;
+    
+    // Generate verification token and send email
+    const token = generateToken({ payload: { email: student.email, _id: student._id } });
+    
+    const emailHTML = `
+        <h2>Account Approved!</h2>
+        <p>Your account registration has been approved. To complete your account setup, please verify your email address.</p>
+        <p>Click the button below to verify your account:</p>
+        <div style="margin: 20px 0;">
+            <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}" 
+               style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px;">
+                Verify Account
+            </a>
+        </div>
+        <p><small>If the button doesn't work, you can copy and paste this link into your browser:</small><br>
+        ${req.protocol}://${req.headers.host}/auth/verify/${token}</p>
+        <br>
+        <p>Best regards,<br>The System Team</p>
+    `;
+
+    const isEmailSent = await sendEmail({ 
+        to: student.email, 
+        subject: 'Account Approved - Complete Your Verification', 
+        html: emailHTML
+    });
+
+    if (!isEmailSent) {
+        return next(new AppError(messages.sendEmail.failToSend, 500));
     }
 
     await student.save();
     
     return res.status(200).json({
-        message: `Student ${action}ed successfully`,
+        message: 'Student approved successfully',
+        success: true
+    });
+}
+
+export const rejectStudent = async (req, res, next) => {
+    const { studentId } = req.params;
+    
+    const student = await User.findOne({ _id: studentId, status: status.WAITING_ADMIN_APPROVAL });
+    
+    if (!student) {
+        return next(new AppError('Student not found or already processed', 404));
+    }
+
+    student.status = status.REJECTED;
+    
+    const emailHTML = `
+        <h2>Account Registration Update</h2>
+        <p>We regret to inform you that your account registration has been rejected.</p>
+        <p>If you believe this is an error or would like to discuss this further, 
+           please contact our support team.</p>
+        <br>
+        <p>Best regards,<br>The System Team</p>
+    `;
+
+    const isEmailSent = await sendEmail({ 
+        to: student.email, 
+        subject: 'Account Registration Status', 
+        html: emailHTML
+    });
+
+    if (!isEmailSent) {
+        return next(new AppError(messages.sendEmail.failToSend, 500));
+    }
+
+    await student.save();
+    
+    return res.status(200).json({
+        message: 'Student rejected successfully',
+        success: true
+    });
+}
+
+export const logout = async (req, res, next) => {
+    // Invalidate the token on the client side by removing it from storage
+    // Optionally, implement server-side token invalidation logic here
+
+    return res.status(200).json({
+        message: 'Logout successful',
         success: true
     });
 }

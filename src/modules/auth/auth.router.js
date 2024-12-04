@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
-import { signupForStudent,verifyAccount,login, forgetPassword, resetPassword, handleStudentApproval } from "./auth.controller.js";
+import { verifyAccount,login, forgetPassword, resetPassword, approveStudent, rejectStudent, signup, logout } from "./auth.controller.js";
 import { isValid } from "../../middleware/validation.js";
 import { signupVal,loginVal, forgetPasswordVal, resetPasswordVal } from "./auth.validation.js";
 
@@ -9,7 +9,7 @@ const authRouter = Router()
 
 authRouter.post('/signup',
     isValid(signupVal),
-    asyncHandler(signupForStudent)
+    asyncHandler(signup)
 )
 
 authRouter.get('/verify/:token',
@@ -32,8 +32,14 @@ authRouter.post('/reset-password',
     asyncHandler(resetPassword)
 )
 
-authRouter.post('/admin/student-approval/:studentId',
-    asyncHandler(handleStudentApproval)
+authRouter.post('/admin/approve-student/:studentId',
+    asyncHandler(approveStudent)
 )
+
+authRouter.post('/admin/reject-student/:studentId',
+    asyncHandler(rejectStudent)
+)
+
+authRouter.post('/logout', asyncHandler(logout))
 
 export default authRouter
