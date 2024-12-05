@@ -94,6 +94,73 @@ export const signup = async (req, res, next) => {
     })
 }
 
+export const staffSignup = async (req, res, next) => {
+    const { name, email, buildingName, password, gender, role } = req.body;
+
+    // Ensure role is either STAFF or MANAGER
+    if (![roles.STAFF, roles.MANAGER].includes(role)) {
+        return next(new AppError(messages.user.invalidRole, 400));
+    }
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        return next(new AppError(messages.user.alreadyExist, 409));
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 5);
+
+    // Create new user
+    const newUser = await User.create({
+        name,
+        email,
+        buildingName,
+        password: hashedPassword,
+        gender,
+        role,
+        status: status.PENDING
+    });
+
+    // Generate verification token
+    const token = generateToken({ payload: { email, _id: newUser._id } });
+
+    // Send verification email
+    const emailSubject = 'Complete Your Account Verification';
+    const emailHTML = `
+        <h2>Welcome!</h2>
+        <p>Thank you for registering. To complete your account setup, please verify your email address.</p>
+        <p>Click the button below to verify your account:</p>
+        <div style="margin: 20px 0;">
+            <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}" 
+               style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px;">
+                Verify Account
+            </a>
+        </div>
+        <p><small>If the button doesn't work, you can copy and paste this link into your browser:</small><br>
+        ${req.protocol}://${req.headers.host}/auth/verify/${token}</p>
+        <br>
+        <p>Best regards,<br>The System Team</p>
+    `;
+
+    const isEmailAccepted = await sendEmail({ 
+        to: email, 
+        subject: emailSubject, 
+        html: emailHTML 
+    });
+
+    if (!isEmailAccepted) {
+        return next(new AppError(messages.sendEmail.failToSend, 500));
+    }
+
+    // Send response
+    return res.status(201).json({
+        message: messages.user.createdSuccessfully,
+        success: true,
+        data: newUser
+    });
+}
+
 
 export const verifyAccount = async (req, res, next) => {
     // get data from req
@@ -323,3 +390,4 @@ export const logout = async (req, res, next) => {
         success: true
     });
 }
+

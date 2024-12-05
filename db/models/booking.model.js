@@ -25,6 +25,10 @@ const bookingSchema = new Schema({
         enum: Object.values(bookingStatus),
         default: bookingStatus.PENDING
     },
+    payment: {
+        type: Schema.Types.ObjectId,
+        ref: 'Payment'
+    },
     createdAt: {
         type: Date,
         default: Date.now

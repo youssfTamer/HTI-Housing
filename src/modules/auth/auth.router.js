@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
-import { verifyAccount,login, forgetPassword, resetPassword, approveStudent, rejectStudent, signup, logout } from "./auth.controller.js";
 import { isValid } from "../../middleware/validation.js";
-import { signupVal,loginVal, forgetPasswordVal, resetPasswordVal } from "./auth.validation.js";
+import { approveStudent, forgetPassword, login, logout, rejectStudent, resetPassword, signup, staffSignup, verifyAccount } from "./auth.controller.js";
+import { forgetPasswordVal, loginVal, resetPasswordVal, signupVal, staffSignupVal } from "./auth.validation.js";
 
 const authRouter = Router()
 
@@ -10,6 +10,11 @@ const authRouter = Router()
 authRouter.post('/signup',
     isValid(signupVal),
     asyncHandler(signup)
+)
+
+authRouter.post('/staff/signup',
+    isValid(staffSignupVal),
+    asyncHandler(staffSignup)
 )
 
 authRouter.get('/verify/:token',

@@ -84,3 +84,9 @@ export const bookingStatus = {
     EXPIRED: 'expired'           // Booking expired without confirmation
 }
 Object.freeze(bookingStatus)
+
+export const paymentStatus = {
+    PENDING: 'pending',
+    APPROVED: 'approved',
+    REJECTED: 'rejected'
+};
