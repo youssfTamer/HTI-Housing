@@ -8,18 +8,20 @@ export const isAuthenticated = () => {
     return async (req, res, next) => {
         //token
         const { token } = req.headers
+
         //verify token
         const payload = verifyToken({ token })
         if (payload.message) {
             return next(new AppError(payload.message, 401))
         }
+
         //check exsit
-        const authStudent =await User.findOne({ _id: payload._id, status: status.VERIFIED })
-        if(!authStudent){
+        const authUser =await User.findOne({ _id: payload._id, status: status.VERIFIED })
+        if(!authUser){
             return next(new AppError(messages.user.notFound,404))
         }
         
-        req.authStudent = authStudent
+        req.authUser = authUser
         next()
     }
 }

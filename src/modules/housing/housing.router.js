@@ -11,14 +11,16 @@ const housingRouter = Router()
 
 //auth todo 
 housingRouter.post('/',
-    //isAuthenticated(),
-    //isAuthorized(roles.MANAGER, roles.STAFF),
+    isAuthenticated(),
+    isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
     isValid(addhousingVal),
     asyncHandler(addHousing)
 )
 
 
 housingRouter.get('/',
+    isAuthenticated(),
+    isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
     asyncHandler(gethousing)
 )
 

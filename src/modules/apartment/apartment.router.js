@@ -11,8 +11,8 @@ const apartmentRouter = Router()
 //todo
 //add apartment
 apartmentRouter.post('/',
-    //isAuthenticated(),
-    //isAuthorized(roles.MANAGER, roles.STAFF,roles.STUDENT),
+    isAuthenticated(),
+    isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
     isValid(addApartmentVal),
     asyncHandler(addApartment)
 )

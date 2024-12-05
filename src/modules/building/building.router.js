@@ -12,14 +12,16 @@ const buildingRouter = Router()
 //todo
 //add building
 buildingRouter.post('/',
-    //isAuthenticated(),
-    //isAuthorized(roles.MANAGER, roles.STAFF),
+    isAuthenticated(),
+    isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
     isValid(addBuildingVal),
     asyncHandler(addBuildings)
 )
 
 //get building
-buildingRouter.get('/', 
+buildingRouter.get('/',
+    isAuthenticated(),
+    isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
     asyncHandler(getBuilding)
 )
 
