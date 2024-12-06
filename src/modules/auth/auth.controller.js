@@ -280,20 +280,28 @@ export const forgetPassword = async (req, res, next) => {
 }
 
 export let resetPassword = async (req, res, next) => {
-    let { OTP, expiresIn, newPassword } = req.body
-    if (OTP && expiresIn >= Date.now()) {
-        let OTPCheck = await User.findOne({ OTP, expiresIn });
-        console.log(OTPCheck);
-        if (!OTPCheck) {
-            return next(new AppError(messages.OTP.ReuseOTP, 404));
-        }
-        OTPCheck.password = bcrypt.hashSync(newPassword, 5)
-        OTPCheck.OTP = ""
-        OTPCheck.expiresIn = 0
-        OTPCheck.save()
-        return res.status(201).json({ message: 'Password has been rested successfully' });
+    let { OTP, newPassword } = req.body;
+
+    // Find the user based on the OTP and check if it has not expired
+    let user = await User.findOne({ 
+        resetPasswordToken: OTP, 
+        resetPasswordExpires: { $gt: Date.now() } // Check if the OTP is still valid
+    });
+
+    if (!user) {
+        return next(new AppError("Invalid or expired OTP", 401));
     }
-    return next(new AppError("Invailed Or Expired OTP", 401 ));
+
+    // Hash the new password
+    user.password = bcrypt.hashSync(newPassword, 5);
+    // Clear the OTP and expiration
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    // Save the updated user
+    await user.save();
+
+    return res.status(201).json({ message: 'Password has been reset successfully' });
 }
 
 export const approveStudent = async (req, res, next) => {

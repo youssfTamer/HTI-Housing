@@ -23,8 +23,8 @@ export const forgetPasswordVal = joi.object({
 })
 
 export const resetPasswordVal = joi.object({
-    email:generalFields.email.required(),
-    password:generalFields.password.required()
+    newPassword:generalFields.password.required(),
+    OTP: generalFields.String.required()
 })
 
 export const staffSignupVal = joi.object({
