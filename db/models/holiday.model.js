@@ -17,10 +17,16 @@ export const holidaySchema = new Schema({
         type: String,
         required: true,
     },
-    guardianIdCard: {
-        type: String,  // This will store the file path or URL to the uploaded ID card
-        required: true,
-    }
+    image: {
+        secure_url:{
+            type:String,
+            required:true
+        },
+        public_id:{
+            type:String,
+            required:true
+        }
+    },
 }, { timestamps: true })
 
 export const Holiday = model('Holiday', holidaySchema)

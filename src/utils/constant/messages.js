@@ -17,6 +17,7 @@ export const messages = {
     OTP: { ...generateMessage('OTP'), ReuseOTP: 'OTP Has been Already Used', },
     maintenance: generateMessage('maintenance'),
     delay: generateMessage('delay'),
+    holiday: generateMessage('holiday'),
     housing: generateMessage('housing'),
     building: generateMessage('building'),
     room: generateMessage('room'),
