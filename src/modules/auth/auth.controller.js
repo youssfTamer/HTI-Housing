@@ -255,16 +255,16 @@ export const forgetPassword = async (req, res, next) => {
     //get data from req
     const { email } = req.body
     //check existenc
-    const studentExist = await User.findOne({ email })
-    if (!studentExist) {
-        return next(new AppError(messages.student.notFound, 404))
+    const userExist = await User.findOne({ email })
+    if (!userExist) {
+        return next(new AppError(messages.user.notFound, 404))
     }
     //send OTP
     const otp = crypto.randomBytes(3).toString('hex')
-    studentExist.resetPasswordToken = otp
-    studentExist.resetPasswordExpires = Date.now() + 3600000
+    userExist.resetPasswordToken = otp
+    userExist.resetPasswordExpires = Date.now() + 3600000
     //add to db
-    await studentExist.save()
+    await userExist.save()
     //send OTP Email 
     const sendOtpEmail = await sendEmail({ to: email, subject: 'Password Reset OTP', html: `Your OTP code for password reset is: ${otp}` })
     if (!sendOtpEmail) {
