@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 import { User } from "../../../db/index.js"
 import { AppError } from "../../utils/appError.js"
 import { messages } from "../../utils/constant/messages.js"
