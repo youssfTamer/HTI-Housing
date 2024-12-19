@@ -57,7 +57,9 @@ const userSchema = new Schema({
     gender: {
         type: String,
         enum: Object.values(gender),
-        required: true
+        required: function() {
+            return this.role === roles.STUDENT || this.role === roles.STAFF;
+        }
     },
     phone: {
         type: String,

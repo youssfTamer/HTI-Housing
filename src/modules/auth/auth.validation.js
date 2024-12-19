@@ -35,3 +35,15 @@ export const staffSignupVal = joi.object({
     gender: generalFields.String.valid(...Object.values(gender)).required(),
     role: generalFields.String.valid(roles.STAFF,roles.MANAGER).required()
 })
+
+export const dashboardSignupVal = joi.object({
+    name: generalFields.String.required(),
+    email: generalFields.email.required(),
+    password: generalFields.password.required(),
+    confirmPassword: generalFields.cPassword.required()
+});
+
+export const dashboardLoginVal = joi.object({
+    email: generalFields.email.required(),
+    password: generalFields.password.required(),
+});

@@ -1,11 +1,12 @@
-import { Booking, Room } from '../../../db/index.js';
+import { Booking, Room, Payment } from '../../../db/index.js';
 import { AppError } from '../../utils/appError.js';
 import { bookingStatus } from '../../utils/constant/enums.js';
 import { messages } from '../../utils/constant/messages.js';
 
-export const createBooking = async (req, res) => {
+export const createBooking = async (req, res, next) => {
     const { room: roomId, checkIn, checkOut } = req.body;
-    const student = req.user._id; // From auth middleware
+    const student = req.authUser._id; // From auth middleware
+
 
     // Check if room exists
     const room = await Room.findById(roomId);
@@ -31,7 +32,7 @@ export const createBooking = async (req, res) => {
 
     // Check if room is already booked for the given dates
     const existingRoomBooking = await Booking.findOne({
-        room: roomId,
+        room : roomId,
         bookingStatus: bookingStatus.CONFIRMED,
         $or: [
             {
@@ -45,9 +46,15 @@ export const createBooking = async (req, res) => {
         return next(new AppError(messages.booking.roomAlreadyBooked, 400))
     }
 
+    // Check if payment exists for the booking
+    const payment = await Payment.findOne({ booking: roomId, student });
+    if (!payment || !payment.receiptImage) {
+        return next(new AppError('Payment must be completed with a receipt image before creating a booking', 400));
+    }
+
     // Create booking
     const booking = await Booking.create({
-        room: roomId,
+        room : roomId,
         student,
         checkIn,
         checkOut

@@ -1,15 +1,27 @@
 import { Payment, Booking } from '../../../db/index.js';
 import { AppError } from '../../utils/appError.js';
 import { paymentStatus, bookingStatus } from '../../utils/constant/enums.js';
+import cloudinary from '../../utils/cloud.js'
 
 export const createPayment = async (req, res, next) => {
-    const { booking: bookingId, receiptImage } = req.body;
-    const student = req.user._id;
+    const { booking: bookingId } = req.body;
+    const student = req.authUser._id;
 
     // Check if booking exists and belongs to student
     const booking = await Booking.findOne({ _id: bookingId, student });
     if (!booking) {
         return next(new AppError('Booking not found or unauthorized', 404));
+    }
+
+    // Upload receipt image to Cloudinary
+    let receiptImage;
+    if (req.file) {
+        const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
+            folder: 'SHMS/receipts'
+        });
+        receiptImage = { secure_url, public_id };
+    } else {
+        return next(new AppError('Receipt image is required', 400));
     }
 
     // Create payment

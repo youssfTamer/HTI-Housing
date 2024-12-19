@@ -162,6 +162,74 @@ export const staffSignup = async (req, res, next) => {
     });
 }
 
+export const dashboardSignup = async (req, res, next) => {
+    let { name, email, password, confirmPassword } = req.body;
+
+    // Check if password and confirmPassword match
+    if (password !== confirmPassword) {
+        return next(new AppError("Passwords do not match", 400));
+    }
+
+    // Check if user already exists
+    const userExist = await User.findOne({ email });
+    if (userExist) {
+        return next(new AppError(messages.user.alreadyExist, 409));
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 5);
+
+    // Create new user
+    const newUser = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+        role: roles.DASHBOARD_ADMIN, // Default role for dashboard signup
+        status: status.PENDING // Default status
+    });
+
+    // Send response
+    return res.status(201).json({
+        message: messages.user.createdSuccessfully,
+        success: true,
+        data: newUser
+    });
+}
+
+export const dashboardLogin = async (req, res, next) => {
+    const { email, password } = req.body;
+
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+        return next(new AppError(messages.user.invalidCredentails, 400));
+    }
+
+    // Check password
+    const match = bcrypt.compareSync(password, user.password);
+    if (!match) {
+        return next(new AppError(messages.user.invalidCredentails, 400));
+    }
+
+    // Generate Token
+    const token = generateToken({ 
+        payload: { 
+            _id: user._id, 
+            email,
+            role: user.role 
+        }
+    });
+
+    // Send response
+    return res.status(200).json({
+        message: messages.user.LoginSuccessfully,
+        success: true,
+        data: {
+            token,
+            role: user.role
+        }
+    });
+}
 
 export const verifyAccount = async (req, res, next) => {
     // get data from req
@@ -399,4 +467,5 @@ export const logout = async (req, res, next) => {
         success: true
     });
 }
+
 

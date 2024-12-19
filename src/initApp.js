@@ -1,5 +1,5 @@
 import { globalErrorHandling } from "./middleware/asyncHandler.js"
-import { apartmentRouter, authRouter, bookingRouter, buildingRouter, delayRouter, floorRouter, holidayRouter, housingRouter, maintenanceRouter, roomRouter, userRouter } from "./modules/index.js"
+import { apartmentRouter, authRouter, bookingRouter, buildingRouter, delayRouter, floorRouter, holidayRouter, housingRouter, maintenanceRouter, paymentRouter, roomRouter, userRouter } from "./modules/index.js"
 
 export const initApp = (app, express) => {
     //parsing data
@@ -17,6 +17,7 @@ export const initApp = (app, express) => {
     app.use('/booking', bookingRouter)
     app.use('/user', userRouter)
     app.use('/holiday', holidayRouter)
+    app.use('/payment', paymentRouter)
 
     //globalErrorHandling
     app.use(globalErrorHandling)

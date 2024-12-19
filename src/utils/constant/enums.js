@@ -10,7 +10,8 @@ Object.freeze(status)
 export const roles = {
     STUDENT: 'student',
     STAFF: 'staff',
-    MANAGER: 'manager'
+    MANAGER: 'manager',
+    DASHBOARD_ADMIN:"dashboard admin"
 }
 Object.freeze(roles)
 

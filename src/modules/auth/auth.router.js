@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
 import { isValid } from "../../middleware/validation.js";
-import { approveStudent, forgetPassword, login, logout, rejectStudent, resetPassword, signup, staffSignup, verifyAccount } from "./auth.controller.js";
-import { forgetPasswordVal, loginVal, resetPasswordVal, signupVal, staffSignupVal } from "./auth.validation.js";
+import { approveStudent, forgetPassword, login, logout, rejectStudent, resetPassword, signup, staffSignup, verifyAccount, dashboardSignup, dashboardLogin } from "./auth.controller.js";
+import { forgetPasswordVal, loginVal, resetPasswordVal, signupVal, staffSignupVal, dashboardSignupVal, dashboardLoginVal } from "./auth.validation.js";
 
 const authRouter = Router()
 
@@ -17,15 +17,24 @@ authRouter.post('/staff/signup',
     asyncHandler(staffSignup)
 )
 
+authRouter.post('/dashboard/signup',
+    isValid(dashboardSignupVal),
+    asyncHandler(dashboardSignup)
+);
+
 authRouter.get('/verify/:token',
     asyncHandler(verifyAccount)
 )
 
-//login
 authRouter.post('/login',
     isValid(loginVal),
     asyncHandler(login)
 )
+
+authRouter.post('/dashboard/login',
+    isValid(dashboardLoginVal),
+    asyncHandler(dashboardLogin)
+);
 
 authRouter.post('/forget-password',
     isValid(forgetPasswordVal),

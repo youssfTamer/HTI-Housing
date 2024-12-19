@@ -1,7 +1,6 @@
 import joi from "joi"
 import { AppError } from "../utils/appError.js"
 
-
 const parseArray = (value,helper)=>{
     let data = JSON.parse(value)
     let schema = joi.array().items(joi.string())
@@ -29,7 +28,6 @@ export const generalFields = {
 }
 
 export const isValid = (schema) => {
-    
     return (req, res, next) => {
         let data = { ...req.body, ...req.params, ...req.query }
         const {error} = schema.validate(data, { abortEarly: false })

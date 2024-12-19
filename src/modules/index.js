@@ -7,7 +7,8 @@ import floorRouter from "./floor/floor.router.js"
 import holidayRouter from "./holiday/holiday.router.js"
 import housingRouter from "./housing/housing.router.js"
 import maintenanceRouter from "./maintenance/maintenance.router.js"
+import paymentRouter from "./payment/payment.router.js"
 import roomRouter from "./rooms/room.router.js"
 import userRouter from "./user/user.router.js"
-export { apartmentRouter, authRouter, bookingRouter, buildingRouter, delayRouter, floorRouter, holidayRouter, housingRouter, maintenanceRouter, roomRouter, userRouter }
+export { apartmentRouter, authRouter, bookingRouter, buildingRouter, delayRouter, floorRouter, holidayRouter, housingRouter, maintenanceRouter, paymentRouter, roomRouter, userRouter }
 

@@ -25,6 +25,16 @@ const bookingSchema = new Schema({
         enum: Object.values(bookingStatus),
         default: bookingStatus.PENDING
     },
+    receiptImage: {
+        secure_url:{
+            type:String,
+            required:true
+        },
+        public_id:{
+            type:String,
+            required:true
+        }
+    },
     payment: {
         type: Schema.Types.ObjectId,
         ref: 'Payment'
