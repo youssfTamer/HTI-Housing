@@ -19,7 +19,7 @@ buildingRouter.post('/',
 )
 
 //get building
-buildingRouter.get('/',
+buildingRouter.get('/:id',
     isAuthenticated(),
     isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
     asyncHandler(getBuilding)

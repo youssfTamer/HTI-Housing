@@ -18,7 +18,8 @@ const floorSchema = new Schema({
     }],
     rooms: [{
         type: Schema.Types.ObjectId,
-        ref: 'Room'
+        ref: 'Room',
+        required: true
     }],
     students: [{
         type: Schema.Types.ObjectId,
@@ -40,5 +41,13 @@ const floorSchema = new Schema({
         default: roomStatus.EMPTY
     }
 }, { timestamps: true });
+
+// Virtual for populating rooms
+floorSchema.virtual('roomDetails', {
+    ref: 'Room',
+    localField: 'rooms',
+    foreignField: '_id',
+});
+
 
 export const Floor = model('Floor', floorSchema);

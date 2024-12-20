@@ -20,7 +20,7 @@ const roomSchema = new Schema({
     building: {
         type: Schema.Types.ObjectId,
         ref: 'Building',
-        required: true
+        required: false //todo
     },
     services: [{
         type: String,

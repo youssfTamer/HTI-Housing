@@ -4,7 +4,7 @@ import { messages } from "../../utils/constant/messages.js"
 
 export const addBuildings = async (req, res, next) => {
     //get data from req
-    const { name, address, floors, totalRooms, totalApartment, roomType, amenities, genderType, maxOccupancy } = req.body
+    const { name, address, floors, NOfloors, totalRooms, totalApartment, roomType, amenities, genderType, maxOccupancy } = req.body
 
     //check existenc
     const buildingExistenc = await Building.findOne({ name })
@@ -17,6 +17,7 @@ export const addBuildings = async (req, res, next) => {
         name,
         address,
         floors,
+        NOfloors,
         totalRooms,
         totalApartment,
         roomType,
@@ -40,11 +41,23 @@ export const addBuildings = async (req, res, next) => {
 
 
 export const getBuilding = async (req, res, next) => {
-    
-    const buildingList = await Building.find()
+    const buildingId = req.params.id; // Assuming you're passing the building ID in the request params
 
-    return res.status(200).json({
-        success: true,
-        data: buildingList
-    })
-}
+    const building = await Building.findById(buildingId)
+        .populate({
+            path: 'floors', // Populate floors
+            populate: {
+                path: 'rooms' // Populate rooms in each floor
+            }
+        })
+        .then(building => {
+            if (!building) {
+                return next(new AppError(messages.building.notFound, 404));
+            }
+
+            return res.status(200).json({
+                success: true,
+                data: building
+            });
+        });
+};

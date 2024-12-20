@@ -4,7 +4,7 @@ import { AppError } from '../../utils/appError.js';
 
 export const createFloor = async (req, res, next) => {
     // Get data from req
-    const { floorNumber, building, status, totalApartments, totalRooms } = req.body;
+    const { floorNumber, building, rooms , status, totalApartments, totalRooms } = req.body;
 
     // Check existence
     const floorExistence = await Floor.findOne({ floorNumber, building });
@@ -16,6 +16,7 @@ export const createFloor = async (req, res, next) => {
     const floor = new Floor({
         floorNumber,
         building,
+        rooms,
         status,
         totalApartments,
         totalRooms
@@ -35,12 +36,12 @@ export const createFloor = async (req, res, next) => {
     });
 };
 
-export const getFloors = async (req, res) => {
-
+export const getFloors = async (req, res, next) => {
     const floorList = await Floor.find()
+        .populate('roomDetails');
+
     return res.status(200).json({
         success: true,
         data: floorList
-    })
-
+    });
 };

@@ -12,14 +12,14 @@ const apartmentSchema = new Schema({
         required: true,
         min: 1
     },
+    rooms:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Room',
+        required: true
+    }],
     floor: {
         type: Schema.Types.ObjectId,
         ref: 'Floor',
-        required: true
-    },
-    building: {
-        type: Schema.Types.ObjectId,
-        ref: 'Building',
         required: true
     },
     services: [{

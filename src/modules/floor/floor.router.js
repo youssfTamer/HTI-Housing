@@ -9,8 +9,6 @@ import { roles } from '../../utils/constant/enums.js';
 
 const floorRouter = Router();
 
-//todo
-
 floorRouter.post('/',
     isAuthenticated(),
     isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]), 
@@ -20,7 +18,7 @@ floorRouter.post('/',
 floorRouter.get('/',
     isAuthenticated(),
     isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
-     isValid(getFloorsSchema),
-      asyncHandler(getFloors));
+    isValid(getFloorsSchema),
+    asyncHandler(getFloors));
 
 export default floorRouter;

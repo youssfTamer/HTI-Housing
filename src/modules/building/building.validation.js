@@ -4,7 +4,8 @@ import { generalFields } from '../../middleware/validation.js'
 export const addBuildingVal = joi.object({
     name: generalFields.String.required(),
     address: generalFields.String.required(),
-    floors: generalFields.Number.required(),
+    floors: generalFields.objectId.required(),
+    NOfloors: generalFields.Number.required(),
     totalRooms:generalFields.Number.required(),
     totalApartment:generalFields.Number.required(),
     roomType: generalFields.String.required(),

@@ -12,7 +12,12 @@ const buildingSchema = new Schema({
             required: true,
             trim: true
     },
-    floors: {
+    floors:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Floor',
+        required: true
+    }],
+    NOfloors: {
         type: Number,
         required: true,
         min: 1
@@ -64,6 +69,13 @@ const buildingSchema = new Schema({
     default: Date.now
   }
 }, { timestamps: true })
+
+// Virtual for populating floors
+buildingSchema.virtual('floorDetails', {
+    ref: 'Floor',
+    localField: 'floors',
+    foreignField: '_id',
+});
 
 //model
 export const Building = model('Building', buildingSchema)
