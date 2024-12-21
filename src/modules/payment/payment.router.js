@@ -19,9 +19,9 @@ paymentRouter.post('/',
     asyncHandler(createPayment)
 );
 
-paymentRouter.patch('/:paymentId/review',
+paymentRouter.patch('/reviewPayment/:paymentId',
     isAuthenticated(),
-    isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT]),
+    isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT, roles.DASHBOARD_ADMIN]),
     isValid(reviewPaymentVal),
     asyncHandler(reviewPayment)
 );

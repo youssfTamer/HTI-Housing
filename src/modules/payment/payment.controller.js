@@ -42,7 +42,7 @@ export const createPayment = async (req, res, next) => {
 export const reviewPayment = async (req, res, next) => {
     const { paymentId } = req.params;
     const { status, adminComment } = req.body;
-    const admin = req.user._id;
+    const admin = req.authUser._id;
 
     const payment = await Payment.findById(paymentId);
     if (!payment) {
@@ -68,3 +68,4 @@ export const reviewPayment = async (req, res, next) => {
         data: payment
     });
 };
+

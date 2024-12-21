@@ -1,8 +1,11 @@
 import { Router } from "express";
 import { asyncHandler } from "../../middleware/asyncHandler.js";
+import { isAuthenticated } from "../../middleware/authentication.js";
+import { isAuthorized } from "../../middleware/authorization.js";
 import { isValid } from "../../middleware/validation.js";
-import { approveStudent, forgetPassword, login, logout, rejectStudent, resetPassword, signup, staffSignup, verifyAccount, dashboardSignup, dashboardLogin } from "./auth.controller.js";
-import { forgetPasswordVal, loginVal, resetPasswordVal, signupVal, staffSignupVal, dashboardSignupVal, dashboardLoginVal } from "./auth.validation.js";
+import { roles } from "../../utils/constant/enums.js";
+import { approveStudent, changePassword, dashboardLogin, dashboardSignup, forgetPassword, login, logout, rejectStudent, resetPassword, signup, staffSignup, verifyAccount } from "./auth.controller.js";
+import { changePasswordVal, dashboardLoginVal, dashboardSignupVal, forgetPasswordVal, loginVal, resetPasswordVal, signupVal, staffSignupVal } from "./auth.validation.js";
 
 const authRouter = Router()
 
@@ -45,6 +48,13 @@ authRouter.post('/reset-password',
     isValid(resetPasswordVal),
     asyncHandler(resetPassword)
 )
+
+authRouter.patch('/dashboard/change-password',
+    isAuthenticated(),
+    isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT, roles.DASHBOARD_ADMIN]),
+    isValid(changePasswordVal),
+    asyncHandler(changePassword)
+);
 
 authRouter.patch('/admin/approve-student/:studentId',
     asyncHandler(approveStudent)

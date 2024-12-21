@@ -7,6 +7,7 @@ import { roles, status } from '../../utils/constant/enums.js'
 import { sendEmail } from '../../utils/email.js'
 import { generateToken, verifyToken } from "../../utils/token.js"
 
+
 export const signup = async (req, res, next) => {
     // get data from req 
     let { ID, name, email, password, role, department, gender, phone } = req.body
@@ -498,6 +499,39 @@ export const logout = async (req, res, next) => {
 
     return res.status(200).json({
         message: 'Logout successful',
+        success: true
+    });
+}
+
+export const changePassword = async (req, res, next) => {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const userId = req.authUser._id; // Assuming you have user ID from the authenticated user
+
+    // Check if new password and confirm password match
+    if (newPassword !== confirmPassword) {
+        return next(new AppError("New passwords do not match", 400));
+    }
+
+    // Find the user
+    const user = await User.findById(userId);
+    if (!user) {
+        return next(new AppError(messages.user.notFound, 404));
+    }
+
+    // Check if the old password is correct
+    const isMatch = bcrypt.compareSync(oldPassword, user.password);
+    if (!isMatch) {
+        return next(new AppError("Old password is incorrect", 400));
+    }
+
+    // Hash the new password
+    user.password = bcrypt.hashSync(newPassword, 5);
+    
+    // Save the updated user
+    await user.save();
+
+    return res.status(200).json({
+        message: 'Password has been changed successfully',
         success: true
     });
 }

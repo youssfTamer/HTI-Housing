@@ -47,3 +47,9 @@ export const dashboardLoginVal = joi.object({
     email: generalFields.email.required(),
     password: generalFields.password.required(),
 });
+
+export const changePasswordVal = joi.object({
+    oldPassword: generalFields.password.required(),
+    newPassword: generalFields.password.required(),
+    confirmPassword: joi.string().valid(joi.ref('newPassword')).required()
+})
