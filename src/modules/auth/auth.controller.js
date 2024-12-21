@@ -188,9 +188,38 @@ export const dashboardSignup = async (req, res, next) => {
         status: status.PENDING // Default status
     });
 
+    // Send verification email
+    const token = generateToken({ payload: { email, _id: newUser._id } });
+    const emailSubject = 'Complete Your Account Verification';
+    const emailHTML = `
+        <h2>Welcome!</h2>
+        <p>Thank you for registering. To complete your account setup, please verify your email address.</p>
+        <p>Click the button below to verify your account:</p>
+        <div style="margin: 20px 0;">
+            <a href="${req.protocol}://${req.headers.host}/auth/verify/${token}" 
+               style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px;">
+                Verify Account
+            </a>
+        </div>
+        <p><small>If the button doesn't work, you can copy and paste this link into your browser:</small><br>
+        ${req.protocol}://${req.headers.host}/auth/verify/${token}</p>
+        <br>
+        <p>Best regards,<br>The System Team</p>
+    `;
+
+    const isEmailAccepted = await sendEmail({ 
+        to: email, 
+        subject: emailSubject, 
+        html: emailHTML 
+    });
+
+    if (!isEmailAccepted) {
+        return next(new AppError(messages.sendEmail.failToSend, 500));
+    }
+
     // Send response
     return res.status(201).json({
-        message: messages.user.createdSuccessfully,
+        message: messages.user.createdSuccessfully + ' Please check your email to verify your account.',
         success: true,
         data: newUser
     });
@@ -209,6 +238,11 @@ export const dashboardLogin = async (req, res, next) => {
     const match = bcrypt.compareSync(password, user.password);
     if (!match) {
         return next(new AppError(messages.user.invalidCredentails, 400));
+    }
+
+    // Check if user is verified
+    if (user.status !== status.VERIFIED) {
+        return next(new AppError(messages.user.pleaseVerify, 403));
     }
 
     // Generate Token
