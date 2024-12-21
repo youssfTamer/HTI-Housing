@@ -8,8 +8,7 @@ export const warningSchema = new Schema({
         required: true,
     },
     room: {
-        type: Schema.Types.ObjectId,
-        ref: 'Room',
+        type: Number ,
         required: true,
     },
     reason: {

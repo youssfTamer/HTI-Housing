@@ -23,5 +23,6 @@ export const messages = {
     room: generateMessage('room'),
     apartment: generateMessage('apartment'),
     floor: generateMessage('floor'),
+    warning: generateMessage('warning'),
     booking: { ...generateMessage('booking'), studentAlreadyBooked: 'You already have a booking for these dates', roomAlreadyBooked: 'Room is already booked for these dates' }
 }
