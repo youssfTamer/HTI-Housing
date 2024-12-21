@@ -8,7 +8,6 @@ export const verifyToken = ({ token, secretKey = process.env.EMAIL_VERFICATION_S
   try {
     return jwt.verify(token,process.env.VERFICATION_SECRET)
   } catch (error) {
-    //console.log(error);
     return {message:error.message} 
   }
 }

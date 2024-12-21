@@ -22,6 +22,7 @@ export const isAuthenticated = () => {
         }
         
         req.authUser = authUser
+        req.authUser.gender = payload.gender;
         next()
     }
 }

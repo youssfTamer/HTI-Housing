@@ -12,7 +12,7 @@ const generateMessage = (entity) => ({
 })
 
 export const messages = {
-    user: { ...generateMessage('user'), invalidVerification: 'Invalid verification status', invalidToken: "Invalid token", verified: 'Account verified Successfully', invalidCredentails: 'invalid credentails', LoginSuccessfully: 'login successfully', notAuthorized: 'not authorized to access this api', invalidRole: 'Invalid role', adminApproval: 'Your account is pending admin approval', pleaseVerify: 'Please verify your account first' },
+    user: { ...generateMessage('user'), invalidVerification: 'Invalid verification status', invalidToken: "Invalid token", verified: 'Account verified Successfully', invalidCredentails: 'invalid credentails', LoginSuccessfully: 'login successfully', notAuthorized: 'not authorized to access this api', genderNotAuthorized: 'gender not Authorized to access this api', invalidRole: 'Invalid role', adminApproval: 'Your account is pending admin approval', pleaseVerify: 'Please verify your account first' },
     sendEmail: { ...generateMessage('EmailService'), failtoOTP: 'fail To Send OTP Email', sendSuccessfully: 'OTP send Successfully', failToSend: 'fail to send mail' },
     OTP: { ...generateMessage('OTP'), ReuseOTP: 'OTP Has been Already Used', },
     maintenance: generateMessage('maintenance'),
