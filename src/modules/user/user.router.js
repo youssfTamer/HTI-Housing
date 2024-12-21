@@ -19,7 +19,7 @@ userRouter.get("/admins",
 // Route to get all users with role 'student'
 userRouter.get('/students',
     isAuthenticated(),
-    isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
+    isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT,roles.DASHBOARD_ADMIN]),
     asyncHandler(getStudents)
 );
  
