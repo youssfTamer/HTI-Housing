@@ -47,11 +47,6 @@ export const createBooking = async (req, res, next) => {
         return next(new AppError(messages.booking.roomAlreadyBooked, 400))
     }
 
-    // Check if payment exists for the booking
-    //const payment = await Payment.findOne({ booking: roomId, student });
-    //if (!payment || !payment.receiptImage) {
-    //    return next(new AppError('Payment must be completed with a receipt image before creating a booking', 400));
-    //}
 
     // Create booking
     const booking = await Booking.create({

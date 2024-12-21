@@ -8,8 +8,8 @@ const paymentSchema = new Schema({
         required: true
     },
     receiptImage: {
-        type: String,  // URL/path to the uploaded image
-        required: true
+        secure_url: { type: String, required: true },
+        public_id: { type: String, required: true }
     },
     status: {
         type: String,

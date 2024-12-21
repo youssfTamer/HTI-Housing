@@ -46,11 +46,11 @@ authRouter.post('/reset-password',
     asyncHandler(resetPassword)
 )
 
-authRouter.post('/admin/approve-student/:studentId',
+authRouter.patch('/admin/approve-student/:studentId',
     asyncHandler(approveStudent)
 )
 
-authRouter.post('/admin/reject-student/:studentId',
+authRouter.patch('/admin/reject-student/:studentId',
     asyncHandler(rejectStudent)
 )
 
