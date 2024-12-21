@@ -2,7 +2,6 @@ import Joi from 'joi';
 
 export const createPaymentVal = Joi.object({
         booking: Joi.string().required(),
-        receiptImage: Joi.string().required()
     })
 
 

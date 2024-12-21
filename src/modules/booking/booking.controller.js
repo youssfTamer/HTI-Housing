@@ -2,6 +2,7 @@ import { Booking, Room, Payment } from '../../../db/index.js';
 import { AppError } from '../../utils/appError.js';
 import { bookingStatus } from '../../utils/constant/enums.js';
 import { messages } from '../../utils/constant/messages.js';
+import { createPayment } from '../payment/payment.controller.js'; // Import payment function
 
 export const createBooking = async (req, res, next) => {
     const { room: roomId, checkIn, checkOut } = req.body;
@@ -47,10 +48,10 @@ export const createBooking = async (req, res, next) => {
     }
 
     // Check if payment exists for the booking
-    const payment = await Payment.findOne({ booking: roomId, student });
-    if (!payment || !payment.receiptImage) {
-        return next(new AppError('Payment must be completed with a receipt image before creating a booking', 400));
-    }
+    //const payment = await Payment.findOne({ booking: roomId, student });
+    //if (!payment || !payment.receiptImage) {
+    //    return next(new AppError('Payment must be completed with a receipt image before creating a booking', 400));
+    //}
 
     // Create booking
     const booking = await Booking.create({
@@ -63,9 +64,10 @@ export const createBooking = async (req, res, next) => {
     // Populate room and student details
     await booking.populate([
         { path: 'room', select: 'roomNumber type price' },
-        { path: 'student', select: 'name email' }
+        { path: 'student', select: 'name email phone' }
     ]);
 
+    // Return booking details for payment
     res.status(201).json({
         message: messages.booking.createdSuccessfully,
         success: true,

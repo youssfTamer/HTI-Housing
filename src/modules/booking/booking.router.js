@@ -13,7 +13,7 @@ const bookingRouter = Router();
 bookingRouter.post('/',
     isAuthenticated(),
     isAuthorized([roles.MANAGER,roles.STAFF,roles.STUDENT]),
-    cloudUploads().single('receiptImage'),
+    //cloudUploads().single('receiptImage'),
     isValid(createBookingVal),
     asyncHandler(createBooking)
 )

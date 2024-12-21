@@ -26,7 +26,7 @@ export const updateUser = async (req, res) => {
 
 export const getStudents = async (req, res) => {
     const users = await User.find(
-        { role: 'student' },
+        { role: 'student', status: 'waiting admin approve' },
         { password: 0, gender: 0 }
     );
     return res.status(200).json({ message: "Success", users });

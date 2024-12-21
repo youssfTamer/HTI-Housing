@@ -28,11 +28,11 @@ const bookingSchema = new Schema({
     receiptImage: {
         secure_url:{
             type:String,
-            required:true
+            required:false
         },
         public_id:{
             type:String,
-            required:true
+            required:false
         }
     },
     payment: {
