@@ -24,7 +24,7 @@ userRouter.patch('/students',
 );
 
 // Route to get all users with role 'student & approved'
-userRouter.get('/students/approved',
+userRouter.patch('/students/approved',
     isAuthenticated(),
     isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT, roles.DASHBOARD_ADMIN]),
     asyncHandler(getStudentsApproved)
