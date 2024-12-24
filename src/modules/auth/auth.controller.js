@@ -168,13 +168,13 @@ export const dashboardSignup = async (req, res, next) => {
 
     // Check if password and confirmPassword match
     if (password !== confirmPassword) {
-        return next(new AppError("Passwords do not match", 400));
+        return next(new AppError("برجاء التأكد من تطابق كلمة السر", 400));
     }
 
     // Check if user already exists
     const userExist = await User.findOne({ email });
     if (userExist) {
-        return next(new AppError(messages.user.alreadyExist, 409));
+        return next(new AppError("هذا البريد الإلكتروني موجود بالفعل", 409));
     }
 
     // Hash password
@@ -220,7 +220,7 @@ export const dashboardSignup = async (req, res, next) => {
 
     // Send response
     return res.status(201).json({
-        message: messages.user.createdSuccessfully + ' Please check your email to verify your account.',
+        message: 'تم إنشاء المستخدم بنجاح. يرجى التحقق من بريدك الإلكتروني لتأكيد حسابك.',
         success: true,
         data: newUser
     });
@@ -232,18 +232,18 @@ export const dashboardLogin = async (req, res, next) => {
     // Find user
     const user = await User.findOne({ email });
     if (!user) {
-        return next(new AppError(messages.user.invalidCredentails, 400));
+        return next(new AppError(" يرجي التأكد من البريد الإلكتروني أو كلمة السر", 400));
     }
 
     // Check password
     const match = bcrypt.compareSync(password, user.password);
     if (!match) {
-        return next(new AppError(messages.user.invalidCredentails, 400));
+        return next(new AppError(" يرجي التأكد من البريد الإلكتروني أو كلمة السر", 400));
     }
 
     // Check if user is verified
     if (user.status !== status.VERIFIED) {
-        return next(new AppError(messages.user.pleaseVerify, 403));
+        return next(new AppError("يرجي تأكيد حسابك", 403));
     }
 
     // Generate Token
@@ -257,7 +257,7 @@ export const dashboardLogin = async (req, res, next) => {
 
     // Send response
     return res.status(200).json({
-        message: messages.user.LoginSuccessfully,
+        message: "تم تسجيل الدخول بنجاح",
         success: true,
         data: {
             token,
@@ -509,7 +509,7 @@ export const changePassword = async (req, res, next) => {
 
     // Check if new password and confirm password match
     if (newPassword !== confirmPassword) {
-        return next(new AppError("New passwords do not match", 400));
+        return next(new AppError("برجاء التأكد من تطابق كلمة السر", 400));
     }
 
     // Find the user
@@ -521,7 +521,7 @@ export const changePassword = async (req, res, next) => {
     // Check if the old password is correct
     const isMatch = bcrypt.compareSync(oldPassword, user.password);
     if (!isMatch) {
-        return next(new AppError("Old password is incorrect", 400));
+        return next(new AppError("كلمة السر غير صحيحة", 400));
     }
 
     // Hash the new password
@@ -531,7 +531,7 @@ export const changePassword = async (req, res, next) => {
     await user.save();
 
     return res.status(200).json({
-        message: 'Password has been changed successfully',
+        message: 'تم تغيير كلمة السر بنجاح',
         success: true
     });
 }

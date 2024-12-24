@@ -44,12 +44,17 @@ export const dashboardSignupVal = joi.object({
 });
 
 export const dashboardLoginVal = joi.object({
-    email: generalFields.email.required(),
-    password: generalFields.password.required(),
+    email: generalFields.email.required().messages({'any.required':" يرجي ادخال البريد الإلكتروني"}),
+    password: generalFields.password.required().messages({'any.required':" يرجي ادخال كلمة السر "}),
 });
 
 export const changePasswordVal = joi.object({
-    oldPassword: generalFields.password.required(),
+    oldPassword: joi.string().required().messages({'any.required':" يرجي ادخال كلمة السر القديمة"}),
     newPassword: generalFields.password.required(),
-    confirmPassword: joi.string().valid(joi.ref('newPassword')).required()
+    confirmPassword: joi.string()
+        .valid(joi.ref('newPassword'))
+        .required()
+        .messages({
+            'any.only': "برجاء التأكد من تطابق كلمة السر."
+        })
 })
