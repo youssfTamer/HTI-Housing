@@ -8,13 +8,11 @@ dotenv.config({ path: path.resolve('./config/.env') })
 const app = express()
 const port = process.env.PORT || 3000
 
-app.use(
-    cors({
-      origin: "http://localhost:5173", // Allow requests from this origin
-      methods: "GET,POST,PUT,DELETE,OPTIONS", // Allowed HTTP methods
-      allowedHeaders: "Content-Type,Authorization", // Allowed headers in requests
-    })
-  );
+app.use(cors({
+  origin: 'http://localhost:5173',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'token'], // Add 'token' here
+}));
 
 connectDB()
 
