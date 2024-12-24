@@ -416,7 +416,7 @@ export const approveStudent = async (req, res, next) => {
         return next(new AppError('Student not found or already processed', 404));
     }
 
-    student.status = status.PENDING;
+    student.status = status.APPROVED;
     
     // Generate verification token and send email
     const token = generateToken({ payload: { email: student.email, _id: student._id } });
