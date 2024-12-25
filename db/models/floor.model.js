@@ -19,7 +19,7 @@ const floorSchema = new Schema({
     rooms: [{
         type: Schema.Types.ObjectId,
         ref: 'Room',
-        required: true
+        required: false
     }],
     students: [{
         type: Schema.Types.ObjectId,

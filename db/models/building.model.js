@@ -15,7 +15,7 @@ const buildingSchema = new Schema({
     floors:[{
         type: Schema.Types.ObjectId,
         ref: 'Floor',
-        required: true
+        required: false
     }],
     NOfloors: {
         type: Number,
@@ -29,7 +29,7 @@ const buildingSchema = new Schema({
     },
     totalApartment: {
         type: Number,
-        required: true,
+        required: false,
         min: 1
     },
     roomType: {

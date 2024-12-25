@@ -8,11 +8,7 @@ dotenv.config({ path: path.resolve('./config/.env') })
 const app = express()
 const port = process.env.PORT || 3000
 
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'token'], // Add 'token' here
-}));
+app.use(cors({ origin: 'https://asemyasser.github.io' }));
 
 connectDB()
 
