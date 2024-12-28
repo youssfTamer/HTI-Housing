@@ -5,7 +5,7 @@ import { isAuthorized } from '../../middleware/authorization.js';
 import { isValid } from '../../middleware/validation.js';
 import { roles } from '../../utils/constant/enums.js';
 import { cloudUploads } from "../../utils/multer-cloud.js";
-import { createBooking } from './booking.controller.js';
+import { createBooking, getBooking } from './booking.controller.js';
 import { createBookingVal } from './booking.validation.js';
 
 const bookingRouter = Router();
@@ -16,6 +16,10 @@ bookingRouter.post('/',
     //cloudUploads().single('receiptImage'),
     isValid(createBookingVal),
     asyncHandler(createBooking)
+)
+
+bookingRouter.get('/:id',
+    asyncHandler(getBooking)
 )
 
 export default bookingRouter;

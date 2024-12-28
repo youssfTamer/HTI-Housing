@@ -69,3 +69,27 @@ export const createBooking = async (req, res, next) => {
         data: booking
     });
 }
+
+export const getBooking = async (req, res, next) => {
+    const { id } = req.params; // Get booking ID from request parameters
+    console.log(`Fetching booking with ID: ${id}`); // Log the booking ID
+
+    // Find the booking by ID and populate room and student details
+    const booking = await Booking.findById(id).populate([
+        { path: 'room', select: 'roomNumber type price' },
+        { path: 'student', select: 'name email phone' }
+    ]);
+
+    // Check if booking exists
+    if (!booking) {
+        console.log(`Booking not found for ID: ${id}`); // Log if booking is not found
+        return next(new AppError(messages.booking.notFound, 404));
+    }
+
+    // Return booking details
+    res.status(200).json({
+        success: true,
+        data: booking
+    });
+}
+
