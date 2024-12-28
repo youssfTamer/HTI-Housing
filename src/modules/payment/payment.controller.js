@@ -69,3 +69,37 @@ export const reviewPayment = async (req, res, next) => {
     });
 };
 
+export const getApprovedPayments = async (req, res, next) => {
+
+    const payments = await Payment.find({ status: paymentStatus.APPROVED }).populate('booking');
+        
+    res.status(200).json({
+        success: true,
+        data: payments
+    });
+  
+};
+
+export const getRejectedPayments = async (req, res, next) => {
+ 
+    const payments = await Payment.find({ status: paymentStatus.REJECTED }).populate('booking');
+        
+    res.status(200).json({
+        success: true,
+        data: payments
+    });
+ 
+
+};
+
+export const getPendingPayments = async (req, res, next) => {
+ 
+    const payments = await Payment.find({ status: paymentStatus.PENDING }).populate('booking');
+        
+    res.status(200).json({
+        success: true,
+        data: payments
+    });
+ 
+
+};
