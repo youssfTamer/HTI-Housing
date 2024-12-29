@@ -48,7 +48,7 @@ export const createPayment = async (req, res, next) => {
 
 export const reviewPayment = async (req, res, next) => {
     const { paymentId } = req.params;
-    const { status, adminComment } = req.body;
+    const { status} = req.body;
     const admin = req.authUser._id;
 
     const payment = await Payment.findById(paymentId);
@@ -58,9 +58,9 @@ export const reviewPayment = async (req, res, next) => {
 
     // Update payment status
     payment.status = status;
-    payment.adminComment = adminComment;
     payment.reviewedBy = admin;
     payment.reviewedAt = new Date();
+    payment.user = payment.user || admin;
     await payment.save();
 
     // Update booking status based on payment review
