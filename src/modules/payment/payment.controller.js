@@ -78,53 +78,65 @@ export const reviewPayment = async (req, res, next) => {
 
 export const getApprovedPayments = async (req, res, next) => {
     const payments = await Payment.find({ status: paymentStatus.APPROVED })
-        .populate({
-            path: 'booking',
-            populate: {
-                path: 'user',
-                select: 'department email name _id'
-            }
-        });
-        
+        .populate('user', 'department email name _id')
+        .populate('booking');
+
+    // Map the payments to include user details within each payment
+    const response = payments.map(payment => ({
+        _id: payment._id,
+        status: payment.status,
+        createdAt: payment.createdAt,
+        updatedAt: payment.updatedAt,
+        receiptImage: payment.receiptImage,
+        user: payment.user
+    }));
+
     res.status(200).json({
         success: true,
-        data: payments
+        data: response
     });
-  
 };
 
 export const getRejectedPayments = async (req, res, next) => {
     const payments = await Payment.find({ status: paymentStatus.REJECTED })
-        .populate({
-            path: 'booking',
-            populate: {
-                path: 'user',
-                select: 'department email name _id'
-            }
-        });
-        
+    .populate('user', 'department email name ID')
+       
+
+    // Map the payments to include only payment and user details
+    const response = payments.map(payment => ({
+        _id: payment._id,
+        status: payment.status,
+        createdAt: payment.createdAt,
+        updatedAt: payment.updatedAt,
+        receiptImage: payment.receiptImage,
+        user: payment.user
+    }));
+    
     res.status(200).json({
         success: true,
-        data: payments
+        data: response
     });
- 
 
 };
 
 export const getPendingPayments = async (req, res, next) => {
     const payments = await Payment.find({ status: paymentStatus.PENDING })
-        .populate({
-            path: 'booking',
-            populate: {
-                path: 'user',
-                select: 'department email name _id'
-            }
-        });
-        
+    .populate('user', 'department email name ID')
+       
+
+    // Map the payments to include only payment and user details
+    const response = payments.map(payment => ({
+        _id: payment._id,
+        status: payment.status,
+        createdAt: payment.createdAt,
+        updatedAt: payment.updatedAt,
+        receiptImage: payment.receiptImage,
+        user: payment.user
+    }));
+    
     res.status(200).json({
         success: true,
-        data: payments
+        data: response
     });
- 
 
 };
