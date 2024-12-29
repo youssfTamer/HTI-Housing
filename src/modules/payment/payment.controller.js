@@ -13,6 +13,12 @@ export const createPayment = async (req, res, next) => {
         return next(new AppError('Booking not found or unauthorized', 404));
     }
 
+    // Check if the booking has already been paid
+    const existingPayment = await Payment.findOne({ booking: bookingId, status: paymentStatus.APPROVED });
+    if (existingPayment) {
+        return next(new AppError('Booking already paid', 400)); // Return error if already paid
+    }
+
     // Upload receipt image to Cloudinary
     let receiptImage;
     if (req.file) {
@@ -27,6 +33,7 @@ export const createPayment = async (req, res, next) => {
     // Create payment
     const payment = await Payment.create({
         booking: bookingId,
+        user: student,
         receiptImage
     });
 
@@ -70,8 +77,14 @@ export const reviewPayment = async (req, res, next) => {
 };
 
 export const getApprovedPayments = async (req, res, next) => {
-
-    const payments = await Payment.find({ status: paymentStatus.APPROVED }).populate('booking');
+    const payments = await Payment.find({ status: paymentStatus.APPROVED })
+        .populate({
+            path: 'booking',
+            populate: {
+                path: 'user',
+                select: 'department email name _id'
+            }
+        });
         
     res.status(200).json({
         success: true,
@@ -81,8 +94,14 @@ export const getApprovedPayments = async (req, res, next) => {
 };
 
 export const getRejectedPayments = async (req, res, next) => {
- 
-    const payments = await Payment.find({ status: paymentStatus.REJECTED }).populate('booking');
+    const payments = await Payment.find({ status: paymentStatus.REJECTED })
+        .populate({
+            path: 'booking',
+            populate: {
+                path: 'user',
+                select: 'department email name _id'
+            }
+        });
         
     res.status(200).json({
         success: true,
@@ -93,8 +112,14 @@ export const getRejectedPayments = async (req, res, next) => {
 };
 
 export const getPendingPayments = async (req, res, next) => {
- 
-    const payments = await Payment.find({ status: paymentStatus.PENDING }).populate('booking');
+    const payments = await Payment.find({ status: paymentStatus.PENDING })
+        .populate({
+            path: 'booking',
+            populate: {
+                path: 'user',
+                select: 'department email name _id'
+            }
+        });
         
     res.status(200).json({
         success: true,
