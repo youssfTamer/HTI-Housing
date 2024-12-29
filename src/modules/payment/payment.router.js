@@ -5,7 +5,7 @@ import { isAuthorized } from '../../middleware/authorization.js';
 import { isValid } from '../../middleware/validation.js';
 import { roles } from '../../utils/constant/enums.js';
 import { cloudUploads } from '../../utils/multer-cloud.js';
-import { createPayment, getApprovedPayments, getPendingPayments, getRejectedPayments, reviewPayment } from './payment.controller.js';
+import { createPayment, getApprovedPayments, getPendingPayments, getRejectedPayments, reviewPayment, getPendingPaymentById } from './payment.controller.js';
 import { createPaymentVal, reviewPaymentVal } from './payment.validation.js';
 
 
@@ -36,6 +36,12 @@ paymentRouter.get('/RejectedPayment',
     isAuthenticated(),
     isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT]),
     asyncHandler(getRejectedPayments)
+)
+
+paymentRouter.get('/PendingPayment/:paymentId',
+    isAuthenticated(),
+    isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT]),
+    asyncHandler(getPendingPaymentById)
 )
 
 paymentRouter.get('/PendingPayment',

@@ -125,3 +125,26 @@ export const getPendingPayments = async (req, res, next) => {
     });
 
 };
+
+export const getPendingPaymentById = async (req, res, next) => {
+    const { paymentId } = req.params; // Get paymentId from request parameters
+
+    // Find the specific pending payment by ID
+    const payment = await Payment.findOne({ _id: paymentId, status: paymentStatus.PENDING })
+        .populate({
+            path: 'booking',
+            populate: {
+                path: 'student',
+                select: 'department ID email name'
+            }
+        });
+
+    if (!payment) {
+        return next(new AppError('Pending payment not found', 404)); // Handle not found case
+    }
+
+    res.status(200).json({
+        success: true,
+        data: payment
+    });
+};
