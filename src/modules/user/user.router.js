@@ -17,21 +17,21 @@ userRouter.get("/admins",
 );
 
 // Route to get all users with role 'student & waiting admin approve'
-userRouter.patch('/students',
+userRouter.get('/students',
     isAuthenticated(),
     isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT, roles.DASHBOARD_ADMIN]),
     asyncHandler(getStudentsWAA)
 );
 
 // Route to get all users with role 'student & approved'
-userRouter.patch('/students/approved',
+userRouter.get('/students/approved',
     isAuthenticated(),
     isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT, roles.DASHBOARD_ADMIN]),
     asyncHandler(getStudentsApproved)
 );
 
 // Route to get all users with role 'student & rejected'
-userRouter.patch('/students/rejected',
+userRouter.get('/students/rejected',
     isAuthenticated(),
     isAuthorized([roles.MANAGER, roles.STAFF, roles.STUDENT, roles.DASHBOARD_ADMIN]),
     asyncHandler(getStudentsRejected)
