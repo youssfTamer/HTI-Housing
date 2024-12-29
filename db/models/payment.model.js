@@ -33,4 +33,12 @@ const paymentSchema = new Schema({
     }
 }, { timestamps: true });
 
+
+paymentSchema.virtual('userDetails', {
+    ref: 'User', // The model to use
+    localField: 'user', // The field in the payment model
+    foreignField: '_id', // The field in the user model
+});
+
+
 export const Payment = model('Payment', paymentSchema);
