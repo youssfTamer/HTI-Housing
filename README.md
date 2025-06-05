@@ -3,6 +3,9 @@
 ## Overview
 SHMS is a Node.js backend application designed to manage housing, bookings, payments, maintenance, and more. It provides a robust API for handling various modules such as rooms, buildings, floors, apartments, and user authentication.
 
+## About
+SHMS is a comprehensive housing management system designed to streamline the management of rooms, buildings, and apartments. It offers features for booking, payment processing, maintenance tracking, and more, making it an ideal solution for property management and housing administration.
+
 ## Features
 - **Housing Management:** Manage rooms, buildings, floors, and apartments.
 - **Payment Module:** Handle payment processing.
